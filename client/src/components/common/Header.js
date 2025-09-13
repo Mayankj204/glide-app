@@ -24,6 +24,7 @@ const Header = () => {
             <Link to="/about" className="hover:text-indigo-400 transition-colors">About</Link>
             <Link to="/pricing" className="hover:text-indigo-400 transition-colors">Pricing</Link>
             <Link to="/join-us" className="hover:text-indigo-400 transition-colors">Join Us</Link>
+            <Link to="/pathpal" className="hover:text-indigo-400 transition-colors">Pathpal</Link> {/* Added Pathpal link */}
           </nav>
         </div>
         <div className="flex items-center space-x-4">
@@ -49,4 +50,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;
