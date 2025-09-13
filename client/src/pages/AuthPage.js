@@ -37,7 +37,7 @@ const AuthPage = () => {
       <div className="absolute inset-0 bg-gray-900 bg-opacity-70"></div>
 
       {/* Top-left text */}
-      <div className="absolute top-10 left-10 ml-10 z-10 text-white max-w-lg">
+      <div className="absolute top-10 left-10 z-10 text-white max-w-lg">
         <h1 className="text-6xl font-extrabold leading-tight text-white">Your Journey, Reimagined</h1>
         <p className="mt-4 text-xl font-medium text-gray-300">Seamless. Smart. Secure. Experience the future of urban mobility.</p>
       </div>
@@ -66,6 +66,10 @@ const AuthPage = () => {
               <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full px-4 py-3 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" />
               <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-3 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" />
               <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-3 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400" />
+              <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-3 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                <option value="rider" className="bg-gray-900 text-white">Rider</option>
+                <option value="driver" className="bg-gray-900 text-white">Driver</option>
+              </select>
               <button type="submit" className="w-full py-3 px-4 text-sm font-bold rounded-md text-gray-900 bg-indigo-400 hover:bg-indigo-300">Sign up</button>
             </form>
             <p className="text-sm text-gray-400">

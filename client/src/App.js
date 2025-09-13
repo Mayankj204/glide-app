@@ -7,15 +7,16 @@ import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
 import RideHistoryPage from './pages/RideHistoryPage';
 import DriverApplicationPage from './pages/DriverApplicationPage';
-import AboutPage from './pages/AboutPage';
+import AboutPage from './pages/AboutPage'; // New Import
 import PricingPage from './pages/PricingPage';
-import WalletPage from './pages/WalletPage'; // New import
-import AddMoneyPage from './pages/AddMoneyPage'; // New import
-import PathpalPage from './pages/PathpalPage'; // New import
+import WalletPage from './pages/WalletPage';
+import AddMoneyPage from './pages/AddMoneyPage';
+import PathpalPage from './pages/PathpalPage';
+import ActivityPage from './pages/ActivityPage';
+import AdminDashboard from './pages/AdminDashboard'; // New Import
 import PrivateRoute from './components/common/PrivateRoute';
 import { GoogleMapsLoader } from './components/common/GoogleMapsLoader';
 import ProfileSidebar from './components/common/ProfileSidebar';
-import ActivityPage from './pages/ActivityPage';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,7 +35,6 @@ function App() {
               <Route path="/" element={<AuthPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/pricing" element={<PricingPage />} />
-               <Route path="/activity" element={<ActivityPage />} />
               <Route path="/join-us" element={<DriverApplicationPage />} />
               
               <Route element={<PrivateRoute />}>
@@ -44,6 +44,8 @@ function App() {
                 <Route path="/wallet" element={<WalletPage />} />
                 <Route path="/add-money" element={<AddMoneyPage />} />
                 <Route path="/pathpal" element={<PathpalPage />} />
+                <Route path="/activity" element={<ActivityPage />} />
+                <Route path="/admin" element={<AdminDashboard />} /> {/* New Admin Route */}
               </Route>
             </Routes>
           </main>

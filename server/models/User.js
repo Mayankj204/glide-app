@@ -18,8 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['rider', 'driver'],
-    default: 'rider'
+    default: 'rider' // Removed the enum, all new users are riders by default
   },
   location: {
     latitude: { type: Number, default: 0 },

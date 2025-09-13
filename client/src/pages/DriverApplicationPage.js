@@ -102,7 +102,7 @@ const DriverApplicationPage = () => {
       setLoading(false);
       alert('Thank you for your application! We will review your details shortly.');
       localStorage.removeItem('driverForm');
-      navigate('/');
+      navigate('/dashboard'); // Redirect to dashboard after submission
     }, 2000);
   };
 
@@ -247,6 +247,8 @@ const DriverApplicationPage = () => {
             </div>
           </div>
 
+          <hr className="border-gray-700" />
+
           {/* Terms and Privacy */}
           <div>
             <label className="text-sm text-gray-300 flex items-center">
@@ -274,7 +276,6 @@ const DriverApplicationPage = () => {
           </button>
         </form>
 
-        {/* Confirmation Modal */}
         {showConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 text-white p-6 rounded-lg shadow-lg max-w-sm">

@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Ride = require('../models/Ride');
 const User = require('../models/User');
 const Review = require('../models/Review');
@@ -32,7 +33,8 @@ const getDistance = async (origin, destination) => {
   }
 };
 
-exports.requestRide = async (req, res, io) => {
+exports.requestRide = async (req, res) => {
+  const io = req.io;
   const { pickupLocation, dropoffLocation, vehicleType } = req.body;
   const riderId = req.user.id;
 
@@ -54,14 +56,15 @@ exports.requestRide = async (req, res, io) => {
 
 exports.getRequestedRides = async (req, res) => {
   try {
-    const requestedRides = await Ride.find({ status: 'requested' }).populate('rider', 'username');
-    res.status(200).json(requestedRides);
+    const rides = await Ride.find({ status: 'requested' }).populate('rider', 'username');
+    res.status(200).json(rides);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-exports.acceptRide = async (req, res, io) => {
+exports.acceptRide = async (req, res) => {
+  const io = req.io;
   const { rideId } = req.params;
   const driverId = req.user.id;
 
@@ -71,7 +74,7 @@ exports.acceptRide = async (req, res, io) => {
       return res.status(404).json({ message: 'Ride not found' });
     }
     if (ride.status !== 'requested') {
-      return res.status(400).json({ message: 'Ride has already been accepted or is no longer available' });
+      return res.status(400).json({ message: 'Ride already accepted or unavailable' });
     }
     ride.driver = driverId;
     ride.status = 'accepted';
@@ -85,7 +88,8 @@ exports.acceptRide = async (req, res, io) => {
 
 exports.getFareEstimate = async (req, res) => {
   const { pickup, dropoff, vehicleType } = req.body;
-  const fareRatePerKm = vehicleDetails[vehicleType].fareRate || 20;
+  const fareRatePerKm = vehicleDetails[vehicleType]?.fareRate || 20;
+
   try {
     const distance = await getDistance(pickup, dropoff);
     if (distance === null) {
@@ -94,7 +98,7 @@ exports.getFareEstimate = async (req, res) => {
     const estimatedFare = parseFloat((distance * fareRatePerKm).toFixed(2));
     res.status(200).json({ estimatedFare });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -112,13 +116,15 @@ exports.getFares = async (req, res) => {
     }));
     res.status(200).json({ fares });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-exports.startRide = async (req, res, io) => {
+exports.startRide = async (req, res) => {
+  const io = req.io;
   const { rideId } = req.params;
   const driverId = req.user.id;
+
   try {
     const ride = await Ride.findById(rideId);
     if (!ride || ride.driver.toString() !== driverId) {
@@ -129,13 +135,15 @@ exports.startRide = async (req, res, io) => {
     io.to(ride.rider.toString()).emit('ride_started', ride);
     res.status(200).json({ message: 'Ride started', ride });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-exports.completeRide = async (req, res, io) => {
+exports.completeRide = async (req, res) => {
+  const io = req.io;
   const { rideId } = req.params;
   const driverId = req.user.id;
+
   try {
     const ride = await Ride.findById(rideId);
     if (!ride || ride.driver.toString() !== driverId) {
@@ -151,26 +159,26 @@ exports.completeRide = async (req, res, io) => {
     io.to(ride.rider.toString()).emit('ride_completed', ride);
     res.status(200).json({ message: 'Ride completed', ride });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 exports.getMatchingRides = async (req, res) => {
   const { driverRoute } = req.body;
   const driverId = req.user.id;
+
   try {
     const requestedRides = await Ride.find({ status: 'requested' }).populate('rider', 'username');
-    const matchingRides = requestedRides.filter(ride => {
-      return ride.pickupLocation === driverRoute.start && ride.dropoffLocation === driverRoute.end;
-    });
+    const matchingRides = requestedRides.filter(ride => 
+      ride.pickupLocation === driverRoute.start && ride.dropoffLocation === driverRoute.end
+    );
     res.status(200).json(matchingRides);
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 exports.createPaymentIntent = async (req, res) => {
-  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   const { rideId } = req.body;
   try {
     const ride = await Ride.findById(rideId);
@@ -190,22 +198,23 @@ exports.createPaymentIntent = async (req, res) => {
 };
 
 exports.submitReview = async (req, res) => {
-  const { rideId } = req.params;
-  const { rating, comment } = req.body;
+  const { rideId, rating, comment } = req.body;
   const riderId = req.user.id;
   try {
     const ride = await Ride.findById(rideId);
     if (!ride || ride.rider.toString() !== riderId || ride.status !== 'completed') {
       return res.status(404).json({ message: 'Ride not found or cannot be reviewed' });
     }
-    const review = await Review.create({
+    const review = new Review({
+      ride: rideId,
       rider: riderId,
       driver: ride.driver,
       rating,
       comment,
     });
+    await review.save();
     res.status(201).json(review);
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
