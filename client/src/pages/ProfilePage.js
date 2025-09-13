@@ -1,13 +1,27 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import profileBg from '../assets/images/bg-profile.png'; // Import your background image
+import profileBg from '../assets/images/bg-profile.png';
 
 const ProfilePage = () => {
   const { user, logout } = useAuth();
+  const [profileImage, setProfileImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   
   // Placeholder for PathPal verification status
   const isPathPalVerified = user?.isPathPalVerified || false;
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -25,15 +39,30 @@ const ProfilePage = () => {
           <h2 className="text-3xl font-bold mb-6 text-indigo-400">My Profile</h2>
           
           <div className="flex items-center space-x-6 mb-8">
-            <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center">
-              <span className="text-4xl font-bold text-gray-400">
-                {user.username.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center">
+              {imagePreview ? (
+                <img src={imagePreview} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-4xl font-bold text-gray-400">
+                  {user.username.charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
             <div>
               <h3 className="text-xl font-semibold">{user.username}</h3>
               <p className="text-gray-400">{user.email}</p>
               <p className="text-gray-400 capitalize">Role: {user.role}</p>
+              
+              {/* Profile image upload input */}
+              <label className="mt-2 block text-sm text-indigo-400 hover:underline cursor-pointer">
+                Change profile picture
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/jpeg, image/png"
+                  className="hidden"
+                />
+              </label>
             </div>
           </div>
 
@@ -53,7 +82,7 @@ const ProfilePage = () => {
               </div>
             </Link>
 
-            {/* New PathPal Verification Section */}
+            {/* PathPal Verification Section */}
             <div className="flex items-center space-x-4 p-4 bg-gray-800 rounded-lg">
               <i className={`fas fa-${isPathPalVerified ? 'check-circle' : 'times-circle'} text-2xl ${isPathPalVerified ? 'text-green-400' : 'text-red-400'}`}></i>
               <div>
