@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import loginBg from '../assets/images/bg-login.png'; // Import your background image
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -19,77 +20,78 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-sm p-8 space-y-8 bg-white rounded-2xl shadow-xl">
-        <h2 className="text-3xl font-bold text-center text-gray-900">Create a new Glide account</h2>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <div
+      className="relative h-screen w-screen flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: `url(${loginBg})` }}
+    >
+      <div className="absolute inset-0 bg-gray-900 bg-opacity-70"></div>
+      <div className="z-10 w-full max-w-md p-8 bg-gray-900 bg-opacity-80 rounded-2xl shadow-xl space-y-6 text-white">
+        <h2 className="text-3xl font-bold text-center text-indigo-400">Sign up</h2>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
+            <label htmlFor="username" className="sr-only">Username</label>
             <input
               id="username"
               name="username"
               type="text"
               required
-              className="relative block w-full px-4 py-3 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-4 py-3 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="mt-4">
+          <div>
+            <label htmlFor="email" className="sr-only">Email</label>
             <input
               id="email"
               name="email"
               type="email"
-              autoComplete="email"
               required
-              className="relative block w-full px-4 py-3 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Email address"
+              className="w-full px-4 py-3 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mt-4">
+          <div>
+            <label htmlFor="password" className="sr-only">Password</label>
             <input
               id="password"
               name="password"
               type="password"
-              autoComplete="new-password"
               required
-              className="relative block w-full px-4 py-3 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-4 py-3 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="mt-4">
-            <label htmlFor="role" className="sr-only">
-              Account Type
-            </label>
+          <div>
+            <label htmlFor="role" className="sr-only">Account Type</label>
             <select
               id="role"
               name="role"
               required
-              className="relative block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="w-full px-4 py-3 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
-              <option value="rider">Rider</option>
-              <option value="driver">Driver</option>
+              <option value="rider" className="text-gray-900">Rider</option>
+              <option value="driver" className="text-gray-900">Driver</option>
             </select>
           </div>
-          <div>
-            <button
-              type="submit"
-              className="relative flex justify-center w-full px-4 py-3 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md group hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign up
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full py-3 px-4 text-sm font-medium rounded-md text-gray-900 bg-indigo-400 hover:bg-indigo-300 transition-colors"
+          >
+            Sign up
+          </button>
         </form>
-        <p className="text-sm text-center text-gray-600">
+        <p className="text-sm text-center text-gray-400">
           Already have an account?{' '}
-          <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Sign in
+          <Link to="/login" className="font-medium text-indigo-400 hover:text-indigo-300">
+            Log in
           </Link>
         </p>
       </div>

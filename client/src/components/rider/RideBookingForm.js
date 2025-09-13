@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import * as axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import VehicleSelector from './VehicleSelector';
+import LocationSearchInput from '../common/LocationSearchInput';
 
 const RideBookingForm = ({ onBooking }) => {
   const [pickup, setPickup] = useState('');
@@ -82,31 +83,19 @@ const RideBookingForm = ({ onBooking }) => {
 
   return (
     <div className="flex flex-col space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="pickup" className="block text-sm font-medium text-gray-700">Pickup Location</label>
-          <input
-            type="text"
-            id="pickup"
-            name="pickup"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
-            required
-            className="mt-1 block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base"
-            placeholder="Enter pickup location"
+      <form onSubmit={handleSubmit} className="space-y-6 text-base  text-black">
+        <div className="space-y-4">
+          <LocationSearchInput
+            address={pickup}
+            setAddress={setPickup}
+            onSelect={(address, latLng) => { setPickup(address); }}
+            placeholder="Pickup Location"
           />
-        </div>
-        <div>
-          <label htmlFor="dropoff" className="block text-sm font-medium text-gray-700">Drop-off Location</label>
-          <input
-            type="text"
-            id="dropoff"
-            name="dropoff"
-            value={dropoff}
-            onChange={(e) => setDropoff(e.target.value)}
-            required
-            className="mt-1 block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base"
-            placeholder="Enter drop-off location"
+          <LocationSearchInput
+            address={dropoff}
+            setAddress={setDropoff}
+            onSelect={(address, latLng) => { setDropoff(address); }}
+            placeholder="Drop-off Location"
           />
         </div>
         
