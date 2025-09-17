@@ -9,14 +9,24 @@ const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('rider');
+<<<<<<< HEAD
+=======
+  const [error, setError] = useState(null);
+>>>>>>> b08aa6e (Correct activity frontend and backend)
   const { login, register } = useAuth();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(email, password);
+<<<<<<< HEAD
     } catch (err) {
       alert('Login failed. Please check your credentials.');
+=======
+      setError(null);
+    } catch (err) {
+      setError('Login failed. Please check your credentials.');
+>>>>>>> b08aa6e (Correct activity frontend and backend)
     }
   };
 
@@ -24,8 +34,14 @@ const AuthPage = () => {
     e.preventDefault();
     try {
       await register(username, email, password, role);
+<<<<<<< HEAD
     } catch (err) {
       alert('Registration failed. Please try again.');
+=======
+      setError(null);
+    } catch (err) {
+      setError('Registration failed. Please try again.');
+>>>>>>> b08aa6e (Correct activity frontend and backend)
     }
   };
 
@@ -46,6 +62,21 @@ const AuthPage = () => {
         <h1 className="text-3xl font-extrabold text-indigo-400 mb-2">Welcome to Glide!</h1>
         <p className="text-xl text-gray-400 mb-6">Your Journey, Reimagined</p>
 
+<<<<<<< HEAD
+=======
+        {/* Error Message Modal */}
+        {error && (
+          <div className="bg-red-500 bg-opacity-90 p-4 rounded-lg text-white font-semibold flex justify-between items-center mb-4 animate-fade-in-down">
+            <span>{error}</span>
+            <button onClick={() => setError(null)} className="ml-4 text-white hover:text-red-200">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+>>>>>>> b08aa6e (Correct activity frontend and backend)
         {showLogin ? (
           <div className="bg-gray-800 p-6 rounded-xl shadow-inner space-y-4">
             <h2 className="text-2xl font-bold text-white">Log in</h2>

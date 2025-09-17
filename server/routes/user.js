@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -43,3 +44,24 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+=======
+const express = require('express');
+const { updateLocation, getAllUsers, getUserActivities } = require('../controllers/userController');
+const protect = require('../middleware/authMiddleware');
+
+// Export a function that receives 'io' for Socket.IO communication
+module.exports = (io) => {
+  const router = express.Router();
+
+  // Update driver location
+  router.post('/location', protect, (req, res) => updateLocation(req, res, io));
+
+  // Get all users (admin only)
+  router.get('/', protect, getAllUsers);
+
+  // Get user activities (rides, wallet, rewards)
+  router.get('/activity', protect, getUserActivities);
+
+  return router;
+};
+>>>>>>> b08aa6e (Correct activity frontend and backend)
