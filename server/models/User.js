@@ -18,11 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-<<<<<<< HEAD
-    default: 'rider' // Removed the enum, all new users are riders by default
-=======
     default: 'rider'
->>>>>>> b08aa6e (Correct activity frontend and backend)
   },
   location: {
     latitude: { type: Number, default: 0 },
@@ -30,11 +26,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-<<<<<<< HEAD
-// Hash password before saving the user
-=======
 // Hash password before saving
->>>>>>> b08aa6e (Correct activity frontend and backend)
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     return next();
@@ -44,18 +36,10 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-<<<<<<< HEAD
-// Method to compare passwords
-=======
 // Compare password method
->>>>>>> b08aa6e (Correct activity frontend and backend)
 userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 const User = mongoose.model('User', userSchema);
-<<<<<<< HEAD
 module.exports = User;
-=======
-module.exports = User;
->>>>>>> b08aa6e (Correct activity frontend and backend)

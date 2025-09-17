@@ -19,14 +19,6 @@ const Dashboard = () => {
     }
   }, [user, navigate]);
 
-<<<<<<< HEAD
-  const handleLogout = () => {
-    logout();
-  };
-
-  // This function needs to be passed to the booking form
-=======
->>>>>>> b08aa6e (Correct activity frontend and backend)
   const handleRideBooking = (rideData) => {
     console.log('Ride booked:', rideData);
   };
