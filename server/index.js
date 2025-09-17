@@ -31,7 +31,6 @@ app.use(
 );
 app.use(express.json());
 
-// Connect to MongoDB using MONGO_URI from .env
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
@@ -51,7 +50,7 @@ io.on('connection', (socket) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/rides', rideRoutes(io));
+app.use('/api/rides', rideRoutes(io)); // Pass io instance to ride routes
 app.use('/api/users', userRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/admin', adminRoutes);

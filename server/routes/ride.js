@@ -18,16 +18,22 @@ const protect = require('../middleware/authMiddleware');
 module.exports = (io) => {
   const router = express.Router();
 
-  router.post('/request', protect, (req, res) => requestRide(req, res, io));
+  // Middleware to attach the Socket.IO instance to every request for emitting in callbacks
+  router.use((req, res, next) => {
+    req.io = io;
+    next();
+  });
+
+  router.post('/request', protect, requestRide);
   router.get('/requested', protect, getRequestedRides);
-  router.put('/accept/:rideId', protect, (req, res) => acceptRide(req, res, io));
+  router.put('/accept/:rideId', protect, acceptRide);
   router.post('/fare', protect, getFareEstimate);
-  router.post('/fares', protect, getFares);
-  router.put('/start/:rideId', protect, (req, res) => startRide(req, res, io));
-  router.put('/complete/:rideId', protect, (req, res) => completeRide(req, res, io));
+  router.post('/fares', getFares); // Public route, no token needed
+  router.put('/start/:rideId', protect, startRide);
+  router.put('/complete/:rideId', protect, completeRide);
   router.post('/match', protect, getMatchingRides);
   router.post('/create-payment-intent', protect, createPaymentIntent);
-  router.post('/review/:rideId', protect, (req, res) => submitReview(req, res, io));
+  router.post('/review/:rideId', protect, submitReview);
 
   return router;
 };

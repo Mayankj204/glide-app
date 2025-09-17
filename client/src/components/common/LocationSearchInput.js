@@ -31,16 +31,22 @@ const LocationSearchInput = ({ address, setAddress, onSelect, placeholder }) => 
           />
           <div className="absolute z-10 w-full bg-white rounded-md shadow-lg mt-1">
             {loading && <div className="p-2 text-gray-500">Loading...</div>}
-            {suggestions.map((suggestion, index) => {
+            {suggestions.map((suggestion) => {
               const className = suggestion.active
                 ? 'bg-indigo-50'
                 : 'bg-white';
+              
+              const suggestionProps = getSuggestionItemProps(suggestion, {
+                className: `${className} cursor-pointer p-3 text-sm text-gray-700 hover:bg-gray-100`,
+              });
+              
+              // Destructure 'key' from the props object to avoid spreading it
+              const { key, ...restOfProps } = suggestionProps;
+
               return (
                 <div
-                  key={suggestion.placeId}
-                  {...getSuggestionItemProps(suggestion, {
-                    className: `${className} cursor-pointer p-3 text-sm text-gray-700 hover:bg-gray-100`,
-                  })}
+                  key={key} // Pass key directly
+                  {...restOfProps} // Spread the rest of the props
                 >
                   <i className="fas fa-map-marker-alt mr-2 text-indigo-400"></i>
                   <span>{suggestion.description}</span>
