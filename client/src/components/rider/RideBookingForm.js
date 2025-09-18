@@ -15,6 +15,9 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
   const [isLocationsSet, setIsLocationsSet] = useState(false);
   const { user } = useAuth();
 
+  // ✅ Use env variable for backend URL
+  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
   // Notify parent about coordinate updates for live map update
   useEffect(() => {
     if (onLocationsChange) {
@@ -28,7 +31,7 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
         try {
           const config = { headers: { 'Content-Type': 'application/json' } };
           const { data } = await axios.post(
-            'http://localhost:5000/api/rides/fares',
+            `${BASE_URL}/api/rides/fares`,
             { pickup, dropoff },
             config
           );
@@ -47,7 +50,7 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
 
     const debounceFetch = setTimeout(fetchFares, 500);
     return () => clearTimeout(debounceFetch);
-  }, [pickup, dropoff]);
+  }, [pickup, dropoff, BASE_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,7 +74,7 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
         },
       };
       const { data } = await axios.post(
-        'http://localhost:5000/api/rides/request',
+        `${BASE_URL}/api/rides/request`,
         {
           pickupLocation: pickup,
           dropoffLocation: dropoff,
