@@ -15,8 +15,12 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
   const [isLocationsSet, setIsLocationsSet] = useState(false);
   const { user } = useAuth();
 
-  // ✅ Use env variable for backend URL
-  const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+  // ✅ Auto-detect backend URL for local + deployed
+  const BASE_URL =
+    process.env.REACT_APP_BACKEND_URL ||
+    (process.env.NODE_ENV === 'development'
+      ? 'http://localhost:5000'
+      : 'https://glide-backend-kvj7.onrender.com');
 
   // Notify parent about coordinate updates for live map update
   useEffect(() => {
@@ -25,6 +29,7 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
     }
   }, [pickupCoords, dropoffCoords, onLocationsChange]);
 
+  // Fetch fare estimates dynamically
   useEffect(() => {
     const fetchFares = async () => {
       if (pickup.trim() && dropoff.trim()) {
@@ -52,6 +57,7 @@ const RideBookingForm = ({ onBooking, onLocationsChange }) => {
     return () => clearTimeout(debounceFetch);
   }, [pickup, dropoff, BASE_URL]);
 
+  // Handle ride request
   const handleSubmit = async (e) => {
     e.preventDefault();
 
