@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import activityBg from '../assets/images/bg-activity.png';
 
+const API_BASE = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
 const ActivityPage = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -17,21 +19,19 @@ const ActivityPage = () => {
   // Fetch live activities from backend
   useEffect(() => {
     const fetchActivities = async () => {
-      // Check if user and token exist before making the API call
       if (user && user.token) {
         setLoading(true);
         try {
           const config = {
             headers: {
-              'Authorization': `Bearer ${user.token}`,
+              Authorization: `Bearer ${user.token}`,
             },
           };
-          const { data } = await axios.get('http://localhost:5000/api/users/activity', config);
+          const { data } = await axios.get(`${API_BASE}/api/users/activity`, config);
           setActivities(data);
           setLoading(false);
         } catch (err) {
           console.error('Fetch activities error:', err);
-          // Handle 401 Unauthorized specifically
           if (err.response && err.response.status === 401) {
             setError('Authentication failed. Please log in again.');
             navigate('/login');
@@ -41,16 +41,14 @@ const ActivityPage = () => {
           setLoading(false);
         }
       } else {
-        // Handle cases where there's no user or token
         setError('User not authenticated.');
         setLoading(false);
         navigate('/login');
       }
     };
-    
-    // Call the function inside the effect
+
     if (!authLoading) {
-        fetchActivities();
+      fetchActivities();
     }
   }, [user, navigate, authLoading]);
 
@@ -62,7 +60,7 @@ const ActivityPage = () => {
         a.details.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // Dynamic stats based on fetched data
+  // Dynamic stats
   const stats = [
     { title: 'Total Rides', value: filteredActivities.filter((a) => a.type === 'ride').length },
     {
@@ -71,8 +69,8 @@ const ActivityPage = () => {
         .filter((a) => a.type === 'ride' && a.status === 'completed')
         .reduce((sum, ride) => sum + ride.amount, 0)}`,
     },
-    { title: 'Reward Points', value: 0 }, // Placeholder
-    { title: 'Eco Impact', value: '50 kg CO₂ saved' }, // Placeholder
+    { title: 'Reward Points', value: 0 },
+    { title: 'Eco Impact', value: '50 kg CO₂ saved' },
   ];
 
   if (loading || authLoading) return <div className="text-center text-white z-10">Loading activities...</div>;
@@ -88,7 +86,7 @@ const ActivityPage = () => {
       <div className="z-10 w-full max-w-6xl p-8 bg-gray-900 bg-opacity-80 rounded-2xl shadow-xl text-white">
         <h2 className="text-4xl font-extrabold text-indigo-400 mb-6 text-center">My Activity</h2>
 
-        {/* Stats Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, idx) => (
             <div
@@ -101,7 +99,7 @@ const ActivityPage = () => {
           ))}
         </div>
 
-        {/* Filters and Search */}
+        {/* Filters + Search */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <div className="flex gap-2 flex-wrap">
             {['all', 'ride', 'wallet', 'reward'].map((type) => (
@@ -154,7 +152,7 @@ const ActivityPage = () => {
           )}
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA */}
         <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
           <button
             onClick={() => navigate('/wallet')}
