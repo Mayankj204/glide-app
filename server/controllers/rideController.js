@@ -21,12 +21,24 @@ const getDistance = async (origin, destination) => {
 
   try {
     const response = await axios.get(url);
+
+    if (response.data.status !== 'OK') {
+      console.error('Distance Matrix API error:', response.data.status, response.data.error_message);
+      return null;
+    }
+    
+    // Add checks for data existence to prevent crashes
+    if (!response.data.rows || !response.data.rows[0] || !response.data.rows[0].elements || !response.data.rows[0].elements[0]) {
+        console.error('Distance Matrix API response is missing required data.');
+        return null;
+    }
+
     const element = response.data.rows[0].elements[0];
     if (element.status === 'OK') {
       const distanceInKm = element.distance.value / 1000;
       return distanceInKm;
     } else {
-      console.error('Distance Matrix API call failed:', element.status);
+      console.error('Distance Matrix element status error:', element.status);
       return null;
     }
   } catch (error) {

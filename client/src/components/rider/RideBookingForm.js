@@ -4,14 +4,23 @@ import { useAuth } from '../../context/AuthContext';
 import VehicleSelector from './VehicleSelector';
 import LocationSearchInput from '../common/LocationSearchInput';
 
-const RideBookingForm = ({ onBooking }) => {
+const RideBookingForm = ({ onBooking, onLocationsChange }) => {
   const [pickup, setPickup] = useState('');
+  const [pickupCoords, setPickupCoords] = useState(null);
   const [dropoff, setDropoff] = useState('');
+  const [dropoffCoords, setDropoffCoords] = useState(null);
   const [vehicleType, setVehicleType] = useState('Mini Car');
   const [availableFares, setAvailableFares] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isLocationsSet, setIsLocationsSet] = useState(false);
   const { user } = useAuth();
+
+  // Notify parent about coordinate updates for live map update
+  useEffect(() => {
+    if (onLocationsChange) {
+      onLocationsChange({ pickupCoords, dropoffCoords });
+    }
+  }, [pickupCoords, dropoffCoords, onLocationsChange]);
 
   useEffect(() => {
     const fetchFares = async () => {
@@ -42,10 +51,12 @@ const RideBookingForm = ({ onBooking }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!pickup.trim() || !dropoff.trim()) {
       alert('Please fill in both pickup and dropoff locations.');
       return;
     }
+
     if (!vehicleType) {
       alert('Please select a vehicle type.');
       return;
@@ -61,7 +72,13 @@ const RideBookingForm = ({ onBooking }) => {
       };
       const { data } = await axios.post(
         'http://localhost:5000/api/rides/request',
-        { pickupLocation: pickup, dropoffLocation: dropoff, vehicleType },
+        {
+          pickupLocation: pickup,
+          dropoffLocation: dropoff,
+          pickupCoords,
+          dropoffCoords,
+          vehicleType,
+        },
         config
       );
 
@@ -69,6 +86,8 @@ const RideBookingForm = ({ onBooking }) => {
       alert('Ride requested successfully!');
       setPickup('');
       setDropoff('');
+      setPickupCoords(null);
+      setDropoffCoords(null);
       setVehicleType('Mini Car');
       setAvailableFares(null);
     } catch (error) {
@@ -82,14 +101,34 @@ const RideBookingForm = ({ onBooking }) => {
     <div className="flex flex-col space-y-6">
       <form onSubmit={handleSubmit} className="space-y-6 text-base text-black">
         <div className="space-y-4">
-          <LocationSearchInput address={pickup} setAddress={setPickup} onSelect={setPickup} placeholder="Pickup Location" />
-          <LocationSearchInput address={dropoff} setAddress={setDropoff} onSelect={setDropoff} placeholder="Drop-off Location" />
+          <LocationSearchInput
+            address={pickup}
+            setAddress={setPickup}
+            onSelect={(address, coords) => {
+              setPickup(address);
+              setPickupCoords(coords);
+            }}
+            placeholder="Pickup Location"
+          />
+          <LocationSearchInput
+            address={dropoff}
+            setAddress={setDropoff}
+            onSelect={(address, coords) => {
+              setDropoff(address);
+              setDropoffCoords(coords);
+            }}
+            placeholder="Drop-off Location"
+          />
         </div>
 
         {isLocationsSet && (
           <div className="pt-4">
             <h4 className="block text-sm font-medium text-gray-700 mb-2">Select Vehicle Type</h4>
-            <VehicleSelector selectedVehicleType={vehicleType} onSelectVehicleType={setVehicleType} availableFares={availableFares} />
+            <VehicleSelector
+              selectedVehicleType={vehicleType}
+              onSelectVehicleType={setVehicleType}
+              availableFares={availableFares}
+            />
           </div>
         )}
 
